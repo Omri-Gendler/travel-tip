@@ -18,7 +18,7 @@ import { storageService } from './async-storage.service.js'
 const PAGE_SIZE = 5
 const DB_KEY = 'locs'
 var gSortBy = { rate: -1 }
-var gFilterBy = { txt: '', minRate: 0 }
+var gFilterBy = { txt: '', minRate: 0 ,creationTime: 0}
 var gPageIdx
 
 _createLocs()
@@ -42,6 +42,9 @@ function query() {
             }
             if (gFilterBy.minRate) {
                 locs = locs.filter(loc => loc.rate >= gFilterBy.minRate)
+            }
+            if (gFilterBy.creationTime) {
+                locs = locs.sort((a,b) => b - a)
             }
 
             // No paging (unused)
@@ -81,7 +84,8 @@ function save(loc) {
 function setFilterBy(filterBy = {}) {
     if (filterBy.txt !== undefined) gFilterBy.txt = filterBy.txt
     if (filterBy.minRate !== undefined && !isNaN(filterBy.minRate)) gFilterBy.minRate = filterBy.minRate
-    return gFilterBy
+    if (filterBy.createdTime !== undefined) gFilterBy.creationTime = filterBy.creationTime
+    return
 }
 
 function getLocCountByRateMap() {
