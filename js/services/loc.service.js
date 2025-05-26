@@ -17,8 +17,8 @@ import { storageService } from './async-storage.service.js'
 
 const PAGE_SIZE = 5
 const DB_KEY = 'locs'
-var gSortBy = { rate: -1 , creationTime: -1}
-var gFilterBy = { txt: '', minRate: 0 }
+var gSortBy = { rate: -1 , creationTime: 1}
+var gFilterBy = { txt: '', minRate: 0 ,creationTime: -1}
 var gPageIdx
 
 
@@ -44,6 +44,9 @@ function query() {
             if (gFilterBy.minRate) {
                 locs = locs.filter(loc => loc.rate >= gFilterBy.minRate)
             }
+            if (gFilterBy.creationTime){
+                locs =  locs.sort((p1, p2) => (p2.createdAt - p1.createdAt)* gSortBy.creationTime )
+            }
            
 
             // No paging (unused)
@@ -56,10 +59,7 @@ function query() {
                 locs.sort((p1, p2) => (p1.rate - p2.rate) * gSortBy.rate)
             } else if (gSortBy.name !== undefined) {
                 locs.sort((p1, p2) => p1.name.localeCompare(p2.name) * gSortBy.name)
-            }
-            if (gSortBy.creationTime) {
-                locs = locs.sort((p1, p2) => (p1.creationTime - p2.createdTime) * gSortBy.creationTime)
-            }
+            } 
 
             return locs
         })
@@ -86,7 +86,6 @@ function save(loc) {
 function setFilterBy(filterBy = {}) {
     if (filterBy.txt !== undefined) gFilterBy.txt = filterBy.txt
     if (filterBy.minRate !== undefined && !isNaN(filterBy.minRate)) gFilterBy.minRate = filterBy.minRate
-    if (filterBy.createdTime !== undefined) gFilterBy.creationTime = filterBy.creationTime
     return
 }
 
@@ -118,7 +117,7 @@ function _createLocs() {
 function _createDemoLocs() {
     var locs =
         [
-            {
+            {   
                 name: "Ben Gurion Airport",
                 rate: 2,
                 geo: {
