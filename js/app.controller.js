@@ -69,6 +69,8 @@ function renderLocs(locs) {
 }
 
 function onRemoveLoc(locId) {
+    if (!confirm('Do you want to delete?')) return
+
     locService.remove(locId)
         .then(() => {
             flashMsg('Location removed')
@@ -107,7 +109,9 @@ function onAddLoc(geo) {
         .then((savedLoc) => {
             flashMsg(`Added Location (id: ${savedLoc.id})`)
             utilService.updateQueryParams({ locId: savedLoc.id })
+
             loadAndRenderLocs()
+
         })
         .catch(err => {
             console.error('OOPs:', err)
@@ -224,11 +228,11 @@ function getFilterByFromQueryParams() {
     const txt = queryParams.get('txt') || ''
     const minRate = queryParams.get('minRate') || 0
 
-    locService.setFilterBy({txt, minRate})
+    locService.setFilterBy({ txt, minRate })
 
     document.querySelector('input[name="filter-by-txt"]').value = txt
     document.querySelector('input[name="filter-by-rate"]').value = minRate
- 
+
 }
 
 function getLocIdFromQueryParams() {
