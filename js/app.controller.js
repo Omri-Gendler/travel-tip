@@ -18,6 +18,9 @@ window.app = {
     onSetFilterBy,
 }
 
+var gUserPos = {lat: 32.0700416, lng: 34.7701248}
+
+
 function onInit() {
     getFilterByFromQueryParams()
     loadAndRenderLocs()
@@ -37,10 +40,13 @@ function renderLocs(locs) {
 
     var strHTML = locs.map(loc => {
         const className = (loc.id === selectedLocId) ? 'active' : ''
+        const latlng = { lat: loc.geo.lat, lng: loc.geo.lng }
+
         return `
         <li class="loc ${className}" data-id="${loc.id}">
             <h4>  
                 <span>${loc.name}</span>
+                <span>${utilService.getDistance(gUserPos, latlng, 'kilometer')}</span>
                 <span title="${loc.rate} stars">${'★'.repeat(loc.rate)}</span>
             </h4>
             <p class="muted">
@@ -54,7 +60,9 @@ function renderLocs(locs) {
                <button title="Edit" onclick="app.onUpdateLoc('${loc.id}')">✏️</button>
                <button title="Select" onclick="app.onSelectLoc('${loc.id}')">🗺️</button>
             </div>     
+            
         </li>`}).join('')
+
 
     const elLocList = document.querySelector('.loc-list')
     elLocList.innerHTML = strHTML || 'No locs to show'
@@ -86,11 +94,11 @@ function onRemoveLoc(locId) {
 function onSearchAddress(ev) {
     ev.preventDefault()
     const el = document.querySelector('[name=address]')
-    
+
     mapService.lookupAddressGeo(el.value)
-    .then(geo => {
-        mapService.panTo(geo)
-        console.log(geo);
+        .then(geo => {
+            mapService.panTo(geo)
+            console.log(geo);
         })
         .catch(err => {
             console.error('OOPs:', err)
@@ -137,6 +145,9 @@ function onPanToUserPos() {
             unDisplayLoc()
             loadAndRenderLocs()
             flashMsg(`You are at Latitude: ${latLng.lat} Longitude: ${latLng.lng}`)
+            gUserPos = latLng
+            console.log('gUser', gUserPos);
+
         })
         .catch(err => {
             console.error('OOPs:', err)
