@@ -64,6 +64,7 @@ function elapsedTime(pastMs) {
 
     const hoursPast = Math.floor(minutesPast / 60)
     if (hoursPast < 24)  return `today` 
+    if (hoursPast > 24)  return `past`
 
     return `${Math.floor(hoursPast / 24)} days ago`
 
