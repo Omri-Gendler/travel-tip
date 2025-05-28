@@ -41,6 +41,7 @@ function renderLocs(locs) {
     var strHTML = locs.map(loc => {
         const className = (loc.id === selectedLocId) ? 'active' : ''
         const latlng = { lat: loc.geo.lat, lng: loc.geo.lng }
+        
 
         return `
         <li class="loc ${className}" data-id="${loc.id}">
@@ -62,12 +63,14 @@ function renderLocs(locs) {
             </div>     
             
         </li>`}).join('')
+        
 
 
     const elLocList = document.querySelector('.loc-list')
     elLocList.innerHTML = strHTML || 'No locs to show'
 
     renderLocStats()
+    renderLastUpdatedStats()
 
     if (selectedLocId) {
         const selectedLoc = locs.find(loc => loc.id === selectedLocId)
@@ -119,7 +122,7 @@ function onAddLoc(geo) {
         .then((savedLoc) => {
             flashMsg(`Added Location (id: ${savedLoc.id})`)
             utilService.updateQueryParams({ locId: savedLoc.id })
-
+ 
             loadAndRenderLocs()
 
         })
@@ -136,6 +139,12 @@ function loadAndRenderLocs() {
             console.error('OOPs:', err)
             flashMsg('Cannot load locations')
         })
+}
+
+function renderLastUpdatedStats(){
+     locService.getLocCountByUpdate().then(stats => {
+        handleStats(stats, 'loc-last-updated')
+    })
 }
 
 function onPanToUserPos() {
