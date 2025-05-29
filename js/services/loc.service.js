@@ -115,7 +115,7 @@ function getLocCountByUpdate(){
                 const updatedAtDate = utilService.elapsedTime(loc.updatedAt)
                 console.log(updatedAtDate)
                 if (updatedAtDate == 'past') map.past++
-                else if (updatedAtDate == 'last hour' || 'Today' || 'Just now') map.today++
+                else if (updatedAtDate == 'last hour' || 'Today' || 'just now') map.today++
                 else map.never++
                 return map
             }, { today: 0, past: 0, never: 0 })
